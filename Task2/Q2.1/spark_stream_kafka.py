@@ -30,7 +30,7 @@ def addIndex(group):
 
 if __name__ == "__main__":
     if len(sys.argv) != 4:
-        print("Usage: script.py <zk> <topic>", file=sys.stderr)
+        print("Usage: script.py <zk> <topic> <origin_airport>", file=sys.stderr)
         exit(-1)
 
     zkQuorum, topic, origin = sys.argv[1:]
