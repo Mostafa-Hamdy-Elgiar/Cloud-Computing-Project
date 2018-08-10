@@ -64,7 +64,7 @@ if __name__ == "__main__":
         df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').option('confirm.truncate',True).options(table="airport_top_airports", keyspace="cloudproject").save()
 
 
-    st1 = ks.map(lambda x: x[1].split(',')).map(lambda x: ((x[3],x[4]),(float(x[6]),1)) if x[6]  and str(x[3]) in origin else ('0',0)).filter(lambda x: x[0]!='0').updateStateByKey(updateFunction)
+    st1 = ks.map(lambda x: x[1].split(',')).map(lambda x: ((x[3],x[4]),(float(x[6]),1)) if x[6] else ('0',0)).filter(lambda x: x[0]!='0').updateStateByKey(updateFunction)
     st2 = st1.map(lambda (key , value): (key[0] , [(key[1] , value)])).reduceByKey(gettop10)
     st3 = st2.foreachRDD(SaveResult)
 
