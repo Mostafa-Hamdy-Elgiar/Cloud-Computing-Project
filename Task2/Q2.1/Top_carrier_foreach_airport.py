@@ -9,7 +9,6 @@ from pyspark.streaming import StreamingContext
 from pyspark.streaming.kafka import KafkaUtils
 from pyspark.sql import SparkSession, SQLContext
 
-origin = ['SRQ' , 'CMH' , 'JFK' , 'SEA' , 'BOS']
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
@@ -66,7 +65,7 @@ if __name__ == "__main__":
         df.write.format("org.apache.spark.sql.cassandra").mode('overwrite').option('confirm.truncate',True).options(table="airport_top_carriers", keyspace="cloudproject").save()
 
 
-    st1 = ks.map(lambda x: x[1].split(',')).map(lambda x: ((x[3],x[1]),(float(x[6]),1)) if x[6]  and str(x[3]) in origin else ('0',0)).filter(lambda x: x[0]!='0').updateStateByKey(updateFunction)
+    st1 = ks.map(lambda x: x[1].split(',')).map(lambda x: ((x[3],x[1]),(float(x[6]),1)) if x[6]  else ('0',0)).filter(lambda x: x[0]!='0').updateStateByKey(updateFunction)
     st2 = st1.map(lambda (key , value): (key[0] , [(key[1] , value)])).reduceByKey(gettop10)
     st3 = st2.foreachRDD(SaveResult)
 
